@@ -114,70 +114,15 @@
 <body>
 
 <div class="input_block">
-    <input type="number" class="field" value="10">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="20">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="30">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="40">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="50">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="60">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="70">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="80">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="90">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="100">
-</div>
-<div class="input_block">
-<input type="number" class="field" value="10">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="20">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="30">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="40">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="50">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="60">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="70">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="80">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="90">
-</div>
-<div class="input_block">
-    <input type="number" class="field" value="100">
+    <input type="text" class="field" id="array">
 </div>
 
 <div id="panel">
     <div id="right">
         <div id="buttons">
-            <a class="button" id="btQuick"  href="javascript://">Sort!</a>
+            <a class="button" id="btQuick"  href="javascript://">Sort</a>
+            <a class="button" id="btReset"  href="javascript://">Reset</a>
+            <a class="button" id="btStop"  href="javascript://">Stop</a>
         </div>
     </div>
     <div id="left">
@@ -188,22 +133,37 @@
 <div class="container"></div>
 
 <script>
+    var rand = [];
+    for (i=0; i<20; ++i) {
+        rand.push(Math.floor(Math.random() * Math.floor(100)));
+    }
+
+    document.getElementById('array').value = rand.toString();
+    console.log(rand);
+
     $("#btQuick").click(function() {
-        $(".button").addClass("disable");
+        $("#btQuick").addClass("disable");
         if (!resetted) reset();
         quick.sort(data);
+    });
+
+    $("#btReset").click(function() {
+        stopQueue();
+        reset();
+    });
+
+    $("#btStop").click(function() {
+        stopQueue();
     });
 
     var data = [];
     var resetted = false;
 
     function reset() {
-        data = [].map.call(document.querySelectorAll('.input_block'), function(block) {
-            return [].map.call(block.querySelectorAll('.field'), function(inp) {
-                return parseInt(inp.value);
-            });
-        });
-        console.log(data);
+        data = document.getElementById('array').value.split(',');
+        for (i=0; i<data.length; ++i) {
+            data[i] = parseInt(data[i]);
+        }
         var tb = $("#sortPanel");
         tb.empty();
         var tr = $("<tr></tr>");
@@ -223,7 +183,7 @@
         return function() {
             fn.apply(context, params);
         };
-    }
+    };
 
     var funqueue = [];
 
@@ -270,6 +230,13 @@
         }
     }
 
+    function stopQueue() {
+        $(".button").removeClass("disable");
+        funqueue = [];
+        clearInterval(intQueue);
+        resetted = true;
+    }
+
     //
     // Array extension for values swapping
     //
@@ -293,7 +260,7 @@
     var quick = {
         a: null,
         sort: function(arr) {
-            intQueue = setInterval(function(){runQueue()}, 25); // CHANGE 25 TO CHANGE ANIMATION DURATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            intQueue = setInterval(function(){runQueue()}, 250); // CHANGE 250 TO CHANGE ANIMATION DURATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             this.a = arr.slice();
             this.qsort(0, this.a.length -1);
             return this.a;
